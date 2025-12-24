@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Celebrity Wireless</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            /* 1Engineers inspired color scheme - Navy & Cyan */
+            --primary: #22d3ee;
+            --primary-glow: rgba(34, 211, 238, 0.35);
+            --accent: #10b981;
+            --purple: #6366f1;
+            --dark: #0f172a;
+            --dark-soft: #1e293b;
+            --dark-card: #1e293b;
+            --dark-border: #334155;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Layout */
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--dark-soft);
+            border-right: 1px solid var(--dark-border);
+            padding: 1.5rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sidebar-logo i {
+            font-size: 1.5rem;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: var(--dark-card);
+            color: var(--text);
+        }
+
+        .sidebar-nav a.active {
+            border-left: 3px solid var(--primary);
+        }
+
+        .sidebar-nav a i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-back {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--dark-border);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            color: var(--text);
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .stat-card-icon.orange { background: rgba(255, 107, 53, 0.15); color: var(--primary); }
+        .stat-card-icon.green { background: rgba(0, 212, 170, 0.15); color: var(--accent); }
+        .stat-card-icon.purple { background: rgba(139, 92, 246, 0.15); color: var(--purple); }
+        .stat-card-icon.blue { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+
+        .stat-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .stat-card-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            color: var(--text-muted);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--text);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Table */
+        .table-container {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .table th {
+            background: var(--dark-soft);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1rem;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #e55f2f;
+        }
+
+        .btn-secondary {
+            background: var(--dark-soft);
+            border: 1px solid var(--dark-border);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-muted);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.25);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            justify-content: center;
+        }
+
+        /* Action Buttons */
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--dark-soft);
+            border: 1px solid var(--dark-border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: var(--text);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            padding: 1.25rem 1.5rem;
+            border-top: 1px solid var(--dark-border);
+        }
+
+        /* Message Detail */
+        .message-detail {
+            background: var(--dark-soft);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .message-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .message-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .message-content {
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--text-dim);
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+        }
+
+        .toast {
+            padding: 1rem 1.5rem;
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease;
+            margin-top: 0.5rem;
+        }
+
+        .toast.success { border-color: var(--success); }
+        .toast.success i { color: var(--success); }
+        .toast.error { border-color: var(--danger); }
+        .toast.error i { color: var(--danger); }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .table {
+                font-size: 0.85rem;
+            }
+
+            .table th,
+            .table td {
+                padding: 0.75rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            .table {
+                min-width: 500px;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--dark-border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-dim);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <i class="fas fa-bolt"></i>
+                <span>Admin Panel</span>
+            </div>
+            
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="#" class="active" data-tab="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li><a href="#" data-tab="messages"><i class="fas fa-envelope"></i> Messages</a></li>
+                    <li><a href="#" data-tab="subscribers"><i class="fas fa-users"></i> Subscribers</a></li>
+                    <li><a href="#" data-tab="links"><i class="fas fa-link"></i> Links</a></li>
+                    <li><a href="#" data-tab="files"><i class="fas fa-folder"></i> Files</a></li>
+                </ul>
+                
+                <div class="sidebar-back">
+                    <ul class="sidebar-nav">
+                        <li><a href="/"><i class="fas fa-arrow-left"></i> Back to Site</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-card-icon orange">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="totalViews">0</div>
+                        <div class="stat-card-label">Total Page Views</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-card-icon green">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="totalMessages">0</div>
+                        <div class="stat-card-label">Messages</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-card-icon purple">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="totalSubscribers">0</div>
+                        <div class="stat-card-label">Subscribers</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-card-icon blue">
+                                <i class="fas fa-mouse-pointer"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="totalClicks">0</div>
+                        <div class="stat-card-label">Link Clicks</div>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 1rem;">Recent Messages</h3>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentMessages">
+                            <tr>
+                                <td colspan="4" class="empty-state">
+                                    <i class="fas fa-inbox"></i>
+                                    <p>No messages yet</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Messages Tab -->
+            <div class="tab-content" id="messages">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Message</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messagesTable">
+                            <tr>
+                                <td colspan="5" class="empty-state">
+                                    <i class="fas fa-inbox"></i>
+                                    <p>No messages yet</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Subscribers Tab -->
+            <div class="tab-content" id="subscribers">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Subscribed On</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subscribersTable">
+                            <tr>
+                                <td colspan="3" class="empty-state">
+                                    <i class="fas fa-users"></i>
+                                    <p>No subscribers yet</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Links Tab -->
+            <div class="tab-content" id="links">
+                <div style="margin-bottom: 1.5rem;">
+                    <button class="btn btn-primary" onclick="openAddLinkModal()">
+                        <i class="fas fa-plus"></i> Add Link
+                    </button>
+                </div>
+                
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>URL</th>
+                                <th>Clicks</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="linksTable">
+                            <tr>
+                                <td colspan="5" class="empty-state">
+                                    <i class="fas fa-link"></i>
+                                    <p>No links yet</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Files Tab -->
+            <div class="tab-content" id="files">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>File Name</th>
+                                <th>Type</th>
+                                <th>Size</th>
+                                <th>Uploaded</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="filesTable">
+                            <tr>
+                                <td colspan="5" class="empty-state">
+                                    <i class="fas fa-folder-open"></i>
+                                    <p>No files uploaded yet</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Link Modal -->
+    <div class="modal-overlay" id="linkModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="linkModalTitle">Add Link</h3>
+                <button class="modal-close" onclick="closeLinkModal()">&times;</button>
+            </div>
+            <form id="linkForm">
+                <div class="modal-body">
+                    <input type="hidden" id="linkId">
+                    <div class="form-group">
+                        <label for="linkTitle">Title</label>
+                        <input type="text" class="form-control" id="linkTitle" placeholder="e.g., Instagram" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="linkUrl">URL</label>
+                        <input type="url" class="form-control" id="linkUrl" placeholder="https://..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="linkIcon">Icon Class (Font Awesome)</label>
+                        <input type="text" class="form-control" id="linkIcon" placeholder="fab fa-instagram">
+                    </div>
+                    <div class="form-group">
+                        <label for="linkDesc">Description</label>
+                        <input type="text" class="form-control" id="linkDesc" placeholder="Short description">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeLinkModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Link</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Message Modal -->
+    <div class="modal-overlay" id="messageModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Message Details</h3>
+                <button class="modal-close" onclick="closeMessageModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="message-detail">
+                    <div class="message-meta">
+                        <span><i class="fas fa-user"></i> <strong id="msgName"></strong></span>
+                        <span><i class="fas fa-envelope"></i> <span id="msgEmail"></span></span>
+                        <span><i class="fas fa-clock"></i> <span id="msgDate"></span></span>
+                    </div>
+                    <div class="message-content" id="msgContent"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeMessageModal()">Close</button>
+                <button class="btn btn-danger" onclick="deleteCurrentMessage()">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        let currentMessageId = null;
+
+        // ==================== TAB NAVIGATION ====================
+        document.querySelectorAll('.sidebar-nav a[data-tab]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const tab = link.dataset.tab;
+                
+                // Update active link
+                document.querySelectorAll('.sidebar-nav a').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                // Update page title
+                document.getElementById('pageTitle').textContent = link.textContent.trim();
+                
+                // Show tab content
+                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                document.getElementById(tab).classList.add('active');
+                
+                // Load data for tab
+                loadTabData(tab);
+                
+                // Close mobile sidebar
+                document.getElementById('sidebar').classList.remove('open');
+            });
+        });
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // ==================== TOAST ====================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease reverse forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // ==================== LOAD DATA ====================
+        async function loadTabData(tab) {
+            switch(tab) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'messages':
+                    loadMessages();
+                    break;
+                case 'subscribers':
+                    loadSubscribers();
+                    break;
+                case 'links':
+                    loadLinks();
+                    break;
+                case 'files':
+                    loadFiles();
+                    break;
+            }
+        }
+
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/api/analytics/summary');
+                const data = await response.json();
+                
+                document.getElementById('totalViews').textContent = data.totalViews || 0;
+                document.getElementById('totalMessages').textContent = data.totalContacts || 0;
+                document.getElementById('totalSubscribers').textContent = data.totalSubscribers || 0;
+                document.getElementById('totalClicks').textContent = data.totalLinkClicks || 0;
+                
+                // Load recent messages
+                const messagesRes = await fetch('/api/contacts');
+                const messages = await messagesRes.json();
+                
+                const tbody = document.getElementById('recentMessages');
+                if (messages.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="empty-state"><i class="fas fa-inbox"></i><p>No messages yet</p></td></tr>`;
+                } else {
+                    tbody.innerHTML = messages.slice(0, 5).map(m => `
+                        <tr>
+                            <td>${escapeHtml(m.name)}</td>
+                            <td>${escapeHtml(m.email)}</td>
+                            <td>${formatDate(m.created_at)}</td>
+                            <td><span class="badge ${m.read ? 'badge-success' : 'badge-warning'}">${m.read ? 'Read' : 'New'}</span></td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Failed to load dashboard:', error);
+            }
+        }
+
+        async function loadMessages() {
+            try {
+                const response = await fetch('/api/contacts');
+                const messages = await response.json();
+                
+                const tbody = document.getElementById('messagesTable');
+                if (messages.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><i class="fas fa-inbox"></i><p>No messages yet</p></td></tr>`;
+                } else {
+                    tbody.innerHTML = messages.map(m => `
+                        <tr>
+                            <td>${escapeHtml(m.name)}</td>
+                            <td>${escapeHtml(m.email)}</td>
+                            <td>${truncate(m.message, 50)}</td>
+                            <td>${formatDate(m.created_at)}</td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="btn btn-secondary btn-icon" onclick="viewMessage(${m.id}, '${escapeHtml(m.name)}', '${escapeHtml(m.email)}', '${escapeHtml(m.message).replace(/'/g, "\\'")}', '${m.created_at}')" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-icon" onclick="deleteMessage(${m.id})" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Failed to load messages:', error);
+            }
+        }
+
+        async function loadSubscribers() {
+            try {
+                const response = await fetch('/api/subscribers');
+                const subscribers = await response.json();
+                
+                const tbody = document.getElementById('subscribersTable');
+                if (subscribers.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="3" class="empty-state"><i class="fas fa-users"></i><p>No subscribers yet</p></td></tr>`;
+                } else {
+                    tbody.innerHTML = subscribers.map(s => `
+                        <tr>
+                            <td>${escapeHtml(s.email)}</td>
+                            <td>${formatDate(s.created_at)}</td>
+                            <td><span class="badge ${s.active ? 'badge-success' : 'badge-danger'}">${s.active ? 'Active' : 'Inactive'}</span></td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Failed to load subscribers:', error);
+            }
+        }
+
+        async function loadLinks() {
+            try {
+                const response = await fetch('/api/links');
+                const links = await response.json();
+                
+                const tbody = document.getElementById('linksTable');
+                if (links.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><i class="fas fa-link"></i><p>No links yet</p></td></tr>`;
+                } else {
+                    tbody.innerHTML = links.map(l => `
+                        <tr>
+                            <td><i class="${l.icon}" style="margin-right: 0.5rem;"></i>${escapeHtml(l.title)}</td>
+                            <td><a href="${l.url}" target="_blank" style="color: var(--primary);">${truncate(l.url, 40)}</a></td>
+                            <td>${l.clicks}</td>
+                            <td><span class="badge ${l.active ? 'badge-success' : 'badge-danger'}">${l.active ? 'Active' : 'Inactive'}</span></td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="btn btn-secondary btn-icon" onclick="editLink(${l.id}, '${escapeHtml(l.title)}', '${escapeHtml(l.url)}', '${escapeHtml(l.icon || '')}', '${escapeHtml(l.description || '')}')" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-icon" onclick="deleteLink(${l.id})" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Failed to load links:', error);
+            }
+        }
+
+        async function loadFiles() {
+            try {
+                const response = await fetch('/api/files');
+                const files = await response.json();
+                
+                const tbody = document.getElementById('filesTable');
+                if (files.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><i class="fas fa-folder-open"></i><p>No files uploaded yet</p></td></tr>`;
+                } else {
+                    tbody.innerHTML = files.map(f => `
+                        <tr>
+                            <td>${escapeHtml(f.original_name)}</td>
+                            <td>${f.mimetype || 'Unknown'}</td>
+                            <td>${formatSize(f.size)}</td>
+                            <td>${formatDate(f.created_at)}</td>
+                            <td>
+                                <div class="action-btns">
+                                    <a href="/uploads/${f.filename}" target="_blank" class="btn btn-secondary btn-icon" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button class="btn btn-danger btn-icon" onclick="deleteFile(${f.id})" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Failed to load files:', error);
+            }
+        }
+
+        // ==================== LINK MODAL ====================
+        function openAddLinkModal() {
+            document.getElementById('linkModalTitle').textContent = 'Add Link';
+            document.getElementById('linkForm').reset();
+            document.getElementById('linkId').value = '';
+            document.getElementById('linkModal').classList.add('active');
+        }
+
+        function editLink(id, title, url, icon, desc) {
+            document.getElementById('linkModalTitle').textContent = 'Edit Link';
+            document.getElementById('linkId').value = id;
+            document.getElementById('linkTitle').value = title;
+            document.getElementById('linkUrl').value = url;
+            document.getElementById('linkIcon').value = icon;
+            document.getElementById('linkDesc').value = desc;
+            document.getElementById('linkModal').classList.add('active');
+        }
+
+        function closeLinkModal() {
+            document.getElementById('linkModal').classList.remove('active');
+        }
+
+        document.getElementById('linkForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const id = document.getElementById('linkId').value;
+            const data = {
+                title: document.getElementById('linkTitle').value,
+                url: document.getElementById('linkUrl').value,
+                icon: document.getElementById('linkIcon').value || 'fas fa-link',
+                description: document.getElementById('linkDesc').value,
+                active: 1
+            };
+            
+            try {
+                const response = await fetch(id ? `/api/links/${id}` : '/api/links', {
+                    method: id ? 'PATCH' : 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                if (result.success || result.id) {
+                    showToast(id ? 'Link updated!' : 'Link added!');
+                    closeLinkModal();
+                    loadLinks();
+                } else {
+                    showToast(result.error || 'Failed', 'error');
+                }
+            } catch (error) {
+                showToast('Network error', 'error');
+            }
+        });
+
+        async function deleteLink(id) {
+            if (!confirm('Delete this link?')) return;
+            
+            try {
+                const response = await fetch(`/api/links/${id}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('Link deleted');
+                    loadLinks();
+                }
+            } catch (error) {
+                showToast('Failed to delete', 'error');
+            }
+        }
+
+        // ==================== MESSAGE MODAL ====================
+        function viewMessage(id, name, email, message, date) {
+            currentMessageId = id;
+            document.getElementById('msgName').textContent = name;
+            document.getElementById('msgEmail').textContent = email;
+            document.getElementById('msgDate').textContent = formatDate(date);
+            document.getElementById('msgContent').textContent = message;
+            document.getElementById('messageModal').classList.add('active');
+            
+            // Mark as read
+            fetch(`/api/contacts/${id}/read`, { method: 'PATCH' });
+        }
+
+        function closeMessageModal() {
+            document.getElementById('messageModal').classList.remove('active');
+            currentMessageId = null;
+        }
+
+        async function deleteCurrentMessage() {
+            if (!currentMessageId || !confirm('Delete this message?')) return;
+            await deleteMessage(currentMessageId);
+            closeMessageModal();
+        }
+
+        async function deleteMessage(id) {
+            try {
+                const response = await fetch(`/api/contacts/${id}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('Message deleted');
+                    loadMessages();
+                    loadDashboard();
+                }
+            } catch (error) {
+                showToast('Failed to delete', 'error');
+            }
+        }
+
+        // ==================== FILE ACTIONS ====================
+        async function deleteFile(id) {
+            if (!confirm('Delete this file?')) return;
+            
+            try {
+                const response = await fetch(`/api/files/${id}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('File deleted');
+                    loadFiles();
+                }
+            } catch (error) {
+                showToast('Failed to delete', 'error');
+            }
+        }
+
+        // ==================== UTILITIES ====================
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text || '';
+            return div.innerHTML;
+        }
+
+        function truncate(str, len) {
+            str = str || '';
+            return str.length > len ? str.substring(0, len) + '...' : str;
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function formatSize(bytes) {
+            if (!bytes) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboard();
+        });
+    </script>
+</body>
+</html>
+
