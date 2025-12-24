@@ -1,0 +1,17 @@
+node_modules
+npm-debug.log
+Dockerfile
+.dockerignore
+.git
+.gitignore
+*.md
+.env
+.env.*
+database.sqlite
+uploads/*
+!uploads/.gitkeep
+Social-media
+*.zip
+.DS_Store
+Thumbs.db
+
