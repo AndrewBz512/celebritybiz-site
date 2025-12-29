@@ -22,7 +22,7 @@ COPY --from=builder /app/node_modules ./node_modules
 
 # Copy application code
 COPY package*.json ./
-COPY server.js ./
+COPY server-secure.js ./
 COPY public ./public
 
 # Create necessary directories
@@ -47,5 +47,5 @@ RUN addgroup -g 1001 -S nodejs && \
 USER nodejs
 
 # Start the application
-CMD ["node", "server.js"]
+CMD ["node", "server-secure.js"]
 

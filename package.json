@@ -1,21 +1,24 @@
 {
   "name": "celebritybiz-site",
-  "version": "1.0.0",
-  "description": "Professional website for Celebrity Wireless with full backend",
-  "main": "server.js",
+  "version": "2.0.0",
+  "description": "Professional website for Celebrity Wireless with full backend and security",
+  "main": "server-secure.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node server-secure.js",
+    "start:insecure": "node server.js",
+    "dev": "node server-secure.js"
   },
   "dependencies": {
     "express": "^4.18.2",
     "better-sqlite3": "^9.2.2",
     "multer": "^1.4.5-lts.1",
     "cors": "^2.8.5",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "express-session": "^1.17.3",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5"
   },
-  "keywords": ["website", "portfolio", "link-in-bio"],
+  "keywords": ["website", "portfolio", "link-in-bio", "secure"],
   "author": "Celebrity Wireless",
   "license": "MIT"
 }
-
